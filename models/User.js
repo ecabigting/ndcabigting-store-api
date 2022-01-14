@@ -6,6 +6,9 @@ const UserSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     isAdmin: { type: Boolean, default: false },
+    fname: {type: String, required: true},
+    lname: {type: String, required: true},
+    dob: {type: Date,required:true,default: new Date()}
   },
   { timestamps: true } // if set to true automatically creates the createdAt and updatedAt field
 );

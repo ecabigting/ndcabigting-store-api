@@ -10,6 +10,9 @@ router.post('/register', async (req, res) => {
   const newUser = new User({
     username: req.body.username,
     email: req.body.email,
+    lname:req.body.lname,
+    fname:req.body.fname,
+    dob:req.body.dob,
     password: cryptoJS.AES.encrypt(req.body.password, process.env.SKEY).toString(),
   });
 
@@ -28,10 +31,7 @@ router.post('/login', async (req, res) => {
     if (!user) {
       return res.status(401).json({ msg25: 'Invalid Credentials' });
     } else {
-      console.log('password from db: ' + user.password);
       const decryptedPass = cryptoJS.AES.decrypt(user.password, process.env.SKEY).toString(cryptoJS.enc.Utf8);
-      console.log('decrypted pass: ' + decryptedPass);
-      console.log('password from body: ' + req.body.password);
       if (req.body.password !== decryptedPass) {
         return res.status(401).send({ msg30: 'Invalid Credentials' });
       }

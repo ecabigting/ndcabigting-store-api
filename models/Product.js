@@ -8,8 +8,8 @@ const ProductSchema = new mongoose.Schema(
     categories: { type: Array},
     size: { type: String},
     color: { type: String},
-    price: { type: number },
-    
+    price: { type: Number },
+    createdBy: {type: String, required: true}
   },
   { timestamps: true } // if set to true automatically creates the createdAt and updatedAt field
 );

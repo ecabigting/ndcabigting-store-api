@@ -6,7 +6,6 @@ const router = require('express').Router();
 // GET USER STATS
 router.get('/stats/', verifyTokenIsAdmin, async (req, res) => {
   const date = new Date();
-  console.log("-- stats --")
   const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
   try {
     const data = await User.aggregate([
@@ -27,6 +26,22 @@ router.get('/stats/', verifyTokenIsAdmin, async (req, res) => {
   } catch (err) {
     console.log(err);
     return res.status(500).json({msg91:"Internal server Error!",err});
+  }
+});
+
+
+// GET ALL USER
+router.get('/', verifyTokenIsAdmin, async (req, res) => {
+  // using query in the request url
+  const query = req.query.new;
+  try {
+    // if query is true only send the 5 latest users
+    // using sort with createdAt parameter -1 returns users sorted by created date desc. passing 1 is asc
+    const userList = query ? await User.find().sort({ createdAt: -1 }).limit(5) : await User.find();
+    return res.status(200).json(userList);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ msg66: 'Internal Server Error!', err });
   }
 });
 
@@ -76,21 +91,6 @@ router.get('/:id', verifyTokenIsAdmin, async (req, res) => {
   } catch (err) {
     console.log(err);
     return res.status(500).json({ msg51: 'Internal Server Error!', err });
-  }
-});
-
-// GET ALL USER
-router.get('/', verifyTokenIsAdmin, async (req, res) => {
-  // using query in the request url
-  const query = req.query.new;
-  try {
-    // if query is true only send the 5 latest users
-    // using sort with createdAt parameter -1 returns users sorted by created date desc. passing 1 is asc
-    const userList = query ? await User.find().sort({ createdAt: -1 }).limit(5) : await User.find();
-    return res.status(200).json(userList);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({ msg66: 'Internal Server Error!', err });
   }
 });
 

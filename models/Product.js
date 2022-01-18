@@ -9,7 +9,8 @@ const ProductSchema = new mongoose.Schema(
     size: { type: String},
     color: { type: String},
     price: { type: Number },
-    createdBy: {type: String, required: true}
+    createdBy: {type: String, required: true},
+    updatedBy: {type: String, required:true}
   },
   { timestamps: true } // if set to true automatically creates the createdAt and updatedAt field
 );

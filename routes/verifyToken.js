@@ -13,7 +13,7 @@ const verifyToken = (req, res, next) => {
       (err, user) => {
         // error will happen when the token is not valid, return the message and the error body
         if (err) {
-          return res.status(403).json({ vtoken: 'Invalid Token!', error: err });
+          return res.status(401).json({ vtoken: 'Invalid Token!', error: err });
         }
         // token is valid send back the user as the request
         req.user = user;

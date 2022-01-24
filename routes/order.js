@@ -2,6 +2,36 @@ const { verifyToken, verifyTokenAuthorization, verifyTokenIsAdmin } = require('.
 const Order = require('../models/Order');
 const router = require('express').Router();
 
+// Get Monthly Income
+router.get('/income/', verifyTokenIsAdmin, async (req, res) => {
+    const date = new Date();
+    const lastMonth = new Date(date.setMonth(date.getMonth() - 1));
+    const prevMonth = new Date(new Date().setMonth(lastMonth.getMonth() - 1));
+  
+    try {
+      const income = await Order.aggregate([
+        {
+          $match: { createdAt: { $gte: prevMonth } },
+        },
+        {
+          $project: {
+            month: { $month: '$createdAt' },
+            sales: '$amount',
+          },
+        },
+        {
+          $group: {
+            _id: '$month',
+            total: { $sum: $sales },
+          },
+        },
+      ]);
+      return res.status(200).json(income);
+    } catch (err) {
+      return res.status(500).json({ msg74: 'Internal Server Error!', err });
+    }
+  });
+
 // CREATE New Order
 router.post('/', verifyToken, async (req, res) => {
   const newOrder = new Order(req.body);
@@ -56,36 +86,6 @@ router.get('/', verifyTokenIsAdmin, async (req, res) => {
     return res.status(200).json(Order);
   } catch (err) {
     return res.status(500).json({ msg69: 'Internal Server Error!', err });
-  }
-});
-
-// Get Monthly Income
-router.get('/income/', verifyTokenIsAdmin, async (req, res) => {
-  const date = new Date();
-  const lastMonth = new Date(date.setMonth(date.getMonth() - 1));
-  const prevMonth = new Date(new Date().setMonth(lastMonth.getMonth() - 1));
-
-  try {
-    const income = await Order.aggregate([
-      {
-        $match: { createdAt: { $gte: prevMonth } },
-      },
-      {
-        $project: {
-          month: { $month: '$createdAt' },
-          sales: '$amount',
-        },
-      },
-      {
-        $group: {
-          _id: '$month',
-          total: { $sum: $sales },
-        },
-      },
-    ]);
-    return res.status(200).json(income);
-  } catch (err) {
-    return res.status(500).json({ msg74: 'Internal Server Error!', err });
   }
 });
 
